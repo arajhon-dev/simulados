@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Correção de simulados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7f6;--surf:#fff;--ink:#14282b;--mute:#5b6f72;--line:#d3dedc;--brand:#0e5a5f;--onbrand:#fff;--ok:#16794a;--bad:#b3261e;--warn:#b86e00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1b1d;--surf:#17282b;--ink:#e6efee;--mute:#9bb0b2;--line:#2c4245;--brand:#5cc2c7;--onbrand:#08262a;--ok:#6fd49c;--bad:#ff9a92;--warn:#ffc15c}}
+:root[data-theme="dark"]{--bg:#0f1b1d;--surf:#17282b;--ink:#e6efee;--mute:#9bb0b2;--line:#2c4245;--brand:#5cc2c7;--onbrand:#08262a;--ok:#6fd49c;--bad:#ff9a92;--warn:#ffc15c}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 "Atkinson Hyperlegible",system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px 14px 40px}
+h1{font-size:1.35rem;margin:6px 0 2px}
+p.sub{margin:0 0 14px;color:var(--mute)}
+button,input{font:inherit;color:inherit}
+.gate{background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:24px}
+.gate label.l{display:block;font-weight:700;margin-bottom:8px}
+.gate input[type=password]{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.rem{display:flex;gap:8px;align-items:center;margin-top:10px;color:var(--mute)}
+.btn{background:var(--brand);color:var(--onbrand);border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer;margin-top:12px}
+.btn.ghost{background:transparent;color:var(--onbrand);border:1.5px solid var(--onbrand);margin-top:0;padding:9px 12px}
+.err{color:var(--bad);margin:10px 0 0;min-height:1.4em}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:11px;border:1.5px solid var(--line);background:var(--surf);border-radius:8px;font-weight:700;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--brand);color:var(--onbrand);border-color:var(--brand)}
+.score{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--brand);color:var(--onbrand);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.score b{font-size:2rem;line-height:1}
+.score small{display:block;opacity:.92}
+.scan{display:block;text-align:center;background:var(--surf);border:2px dashed var(--brand);color:var(--brand);border-radius:12px;padding:18px;font-weight:700;font-size:1.15rem;cursor:pointer;margin-bottom:10px}
+.scan:focus-within{outline:3px solid var(--brand);outline-offset:2px}
+.scan small{display:block;font-weight:400;color:var(--mute);font-size:.9rem;margin-top:2px}
+#cam{position:absolute;opacity:0;width:1px;height:1px}
+#msg{margin:0 0 10px;min-height:1.4em}
+#msg.bad{color:var(--bad);font-weight:700}
+#msg.warn{color:var(--warn);font-weight:700}
+#prev{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);margin-bottom:12px}
+details{margin-bottom:12px}
+summary{cursor:pointer;font-weight:700;padding:10px 4px}
+.quick{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px}
+.quick input{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);letter-spacing:.12em;text-transform:uppercase}
+.quick small{color:var(--mute)}
+.q{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--surf)}
+.q:first-child{border-radius:10px 10px 0 0}.q:last-child{border-radius:0 0 10px 10px;border-bottom:0}
+.q.chk{box-shadow:inset 5px 0 0 var(--warn)}
+.q .n{width:2.1em;font-weight:700;text-align:right}
+.q .opts{display:flex;gap:6px;flex:1}
+.opt{flex:1;min-width:0;height:42px;border:1.5px solid var(--line);background:var(--bg);border-radius:8px;font-weight:700;cursor:pointer}
+.opt[aria-pressed="true"]{border-color:var(--brand);background:var(--brand);color:var(--onbrand)}
+.q.ok .opt[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--surf)}
+.q.no .opt[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:var(--surf)}
+.q .res{width:3.9em;text-align:right;font-size:.85rem;font-weight:700}
+.q.ok .res{color:var(--ok)}.q.no .res{color:var(--bad)}.q.chk .res{color:var(--warn)}
+.list{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.cell{background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}
+.cell span{display:block;color:var(--mute);font-size:.85rem}
+.cell b{font-size:1.6rem;color:var(--brand)}
+.picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:8px}.pk{padding:18px 8px;border:1.5px solid var(--brand);background:var(--surf);color:var(--brand);border-radius:10px;font-weight:700;font-size:1.05rem;cursor:pointer}.who{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.who button{background:none;border:0;color:var(--brand);text-decoration:underline;cursor:pointer;padding:4px}
+.out{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;margin-top:18px;padding:4px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1 id="ttl">Correção de simulados</h1>
+<p class="sub">Correção pelo cartão-resposta</p>
+
+<section class="gate" id="gate">
+  <label class="l" for="pw">Senha do professor</label>
+  <input id="pw" type="password" autocomplete="current-password">
+  <label class="rem"><input type="checkbox" id="rem" checked> Lembrar a senha neste aparelho</label>
+  <p class="err" id="err" role="alert"></p>
+  <button class="btn" id="enter">Entrar</button>
+</section>
+
+<section id="pick" hidden>
+  <p class="sub">Escolha a turma que vai corrigir:</p>
+  <div class="picks" id="picks"></div>
+  <button class="out" id="out2">Sair e esquecer a senha neste aparelho</button>
+</section>
+
+<section id="app" hidden>
+  <div class="who"><span id="who"></span><button id="swap">Trocar turma</button></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="t1" aria-selected="true">Corrigir cartão</button>
+    <button role="tab" id="t2" aria-selected="false">Gabarito</button>
+  </div>
+
+  <div id="p1">
+    <div class="score" aria-live="polite">
+      <div><b id="hits">0</b> <span>de <span id="tot">30</span> acertos</span><small id="info">Nenhum cartão lido</small></div>
+      <button class="btn ghost" id="clear">Próximo aluno</button>
+    </div>
+    <label class="scan" for="cam">Fotografar o cartão<small>Enquadre a folha inteira, com os 4 quadrados pretos visíveis</small></label>
+    <input id="cam" type="file" accept="image/*" capture="environment">
+    <p id="msg" role="status"></p>
+    <canvas id="prev" hidden></canvas>
+    <details id="chk">
+      <summary>Conferir ou corrigir as respostas lidas</summary>
+      <div class="quick">
+        <label for="seq"><b>Digitar todas as respostas de uma vez</b></label>
+        <input id="seq" placeholder="BCBDAC…" autocapitalize="characters" autocomplete="off">
+        <small>Use um ponto (.) para questão em branco.</small>
+      </div>
+      <div class="list" id="rows"></div>
+    </details>
+  </div>
+
+  <div id="p2" hidden><div class="grid" id="key"></div></div>
+  <button class="out" id="out">Sair e esquecer a senha neste aparelho</button>
+</section>
+</main>
+<script>
+const BLOB={"s": "/8TOA2PKWvP66Vz9g/Dh1g==", "i": "hJstN80UDKBYjkgP", "c": "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"};
+const GEOS={"30":{"W": 210.0, "H": 297.0, "mk": [[12, 12], [198.0, 12], [198.0, 285.0], [12, 285.0]], "qr": [156.0, 14, 32, 32], "R": 3.4, "b": [[[36.0, 94.5], [44.6, 94.5], [53.2, 94.5], [61.8, 94.5], [70.4, 94.5]], [[36.0, 113.5], [44.6, 113.5], [53.2, 113.5], [61.8, 113.5], [70.4, 113.5]], [[36.0, 132.5], [44.6, 132.5], [53.2, 132.5], [61.8, 132.5], [70.4, 132.5]], [[36.0, 151.5], [44.6, 151.5], [53.2, 151.5], [61.8, 151.5], [70.4, 151.5]], [[36.0, 170.5], [44.6, 170.5], [53.2, 170.5], [61.8, 170.5], [70.4, 170.5]], [[36.0, 189.5], [44.6, 189.5], [53.2, 189.5], [61.8, 189.5], [70.4, 189.5]], [[36.0, 208.5], [44.6, 208.5], [53.2, 208.5], [61.8, 208.5], [70.4, 208.5]], [[36.0, 227.5], [44.6, 227.5], [53.2, 227.5], [61.8, 227.5], [70.4, 227.5]], [[36.0, 246.5], [44.6, 246.5], [53.2, 246.5], [61.8, 246.5], [70.4, 246.5]], [[36.0, 265.5], [44.6, 265.5], [53.2, 265.5], [61.8, 265.5], [70.4, 265.5]], [[91.33, 94.5], [99.93, 94.5], [108.53, 94.5], [117.13, 94.5], [125.73, 94.5]], [[91.33, 113.5], [99.93, 113.5], [108.53, 113.5], [117.13, 113.5], [125.73, 113.5]], [[91.33, 132.5], [99.93, 132.5], [108.53, 132.5], [117.13, 132.5], [125.73, 132.5]], [[91.33, 151.5], [99.93, 151.5], [108.53, 151.5], [117.13, 151.5], [125.73, 151.5]], [[91.33, 170.5], [99.93, 170.5], [108.53, 170.5], [117.13, 170.5], [125.73, 170.5]], [[91.33, 189.5], [99.93, 189.5], [108.53, 189.5], [117.13, 189.5], [125.73, 189.5]], [[91.33, 208.5], [99.93, 208.5], [108.53, 208.5], [117.13, 208.5], [125.73, 208.5]], [[91.33, 227.5], [99.93, 227.5], [108.53, 227.5], [117.13, 227.5], [125.73, 227.5]], [[91.33, 246.5], [99.93, 246.5], [108.53, 246.5], [117.13, 246.5], [125.73, 246.5]], [[91.33, 265.5], [99.93, 265.5], [108.53, 265.5], [117.13, 265.5], [125.73, 265.5]], [[146.67, 94.5], [155.27, 94.5], [163.87, 94.5], [172.47, 94.5], [181.07, 94.5]], [[146.67, 113.5], [155.27, 113.5], [163.87, 113.5], [172.47, 113.5], [181.07, 113.5]], [[146.67, 132.5], [155.27, 132.5], [163.87, 132.5], [172.47, 132.5], [181.07, 132.5]], [[146.67, 151.5], [155.27, 151.5], [163.87, 151.5], [172.47, 151.5], [181.07, 151.5]], [[146.67, 170.5], [155.27, 170.5], [163.87, 170.5], [172.47, 170.5], [181.07, 170.5]], [[146.67, 189.5], [155.27, 189.5], [163.87, 189.5], [172.47, 189.5], [181.07, 189.5]], [[146.67, 208.5], [155.27, 208.5], [163.87, 208.5], [172.47, 208.5], [181.07, 208.5]], [[146.67, 227.5], [155.27, 227.5], [163.87, 227.5], [172.47, 227.5], [181.07, 227.5]], [[146.67, 246.5], [155.27, 246.5], [163.87, 246.5], [172.47, 246.5], [181.07, 246.5]], [[146.67, 265.5], [155.27, 265.5], [163.87, 265.5], [172.47, 265.5], [181.07, 265.5]]]},"45":{"W": 210.0, "H": 297.0, "mk": [[12, 12], [198.0, 12], [198.0, 285.0], [12, 285.0]], "qr": [156.0, 14, 32, 32], "R": 3.4, "b": [[[36.0, 94.5], [44.6, 94.5], [53.2, 94.5], [61.8, 94.5], [70.4, 94.5]], [[36.0, 106.1], [44.6, 106.1], [53.2, 106.1], [61.8, 106.1], [70.4, 106.1]], [[36.0, 117.7], [44.6, 117.7], [53.2, 117.7], [61.8, 117.7], [70.4, 117.7]], [[36.0, 129.3], [44.6, 129.3], [53.2, 129.3], [61.8, 129.3], [70.4, 129.3]], [[36.0, 140.9], [44.6, 140.9], [53.2, 140.9], [61.8, 140.9], [70.4, 140.9]], [[36.0, 152.5], [44.6, 152.5], [53.2, 152.5], [61.8, 152.5], [70.4, 152.5]], [[36.0, 164.1], [44.6, 164.1], [53.2, 164.1], [61.8, 164.1], [70.4, 164.1]], [[36.0, 175.7], [44.6, 175.7], [53.2, 175.7], [61.8, 175.7], [70.4, 175.7]], [[36.0, 187.3], [44.6, 187.3], [53.2, 187.3], [61.8, 187.3], [70.4, 187.3]], [[36.0, 198.9], [44.6, 198.9], [53.2, 198.9], [61.8, 198.9], [70.4, 198.9]], [[36.0, 210.5], [44.6, 210.5], [53.2, 210.5], [61.8, 210.5], [70.4, 210.5]], [[36.0, 222.1], [44.6, 222.1], [53.2, 222.1], [61.8, 222.1], [70.4, 222.1]], [[36.0, 233.7], [44.6, 233.7], [53.2, 233.7], [61.8, 233.7], [70.4, 233.7]], [[36.0, 245.3], [44.6, 245.3], [53.2, 245.3], [61.8, 245.3], [70.4, 245.3]], [[36.0, 256.9], [44.6, 256.9], [53.2, 256.9], [61.8, 256.9], [70.4, 256.9]], [[91.33, 94.5], [99.93, 94.5], [108.53, 94.5], [117.13, 94.5], [125.73, 94.5]], [[91.33, 106.1], [99.93, 106.1], [108.53, 106.1], [117.13, 106.1], [125.73, 106.1]], [[91.33, 117.7], [99.93, 117.7], [108.53, 117.7], [117.13, 117.7], [125.73, 117.7]], [[91.33, 129.3], [99.93, 129.3], [108.53, 129.3], [117.13, 129.3], [125.73, 129.3]], [[91.33, 140.9], [99.93, 140.9], [108.53, 140.9], [117.13, 140.9], [125.73, 140.9]], [[91.33, 152.5], [99.93, 152.5], [108.53, 152.5], [117.13, 152.5], [125.73, 152.5]], [[91.33, 164.1], [99.93, 164.1], [108.53, 164.1], [117.13, 164.1], [125.73, 164.1]], [[91.33, 175.7], [99.93, 175.7], [108.53, 175.7], [117.13, 175.7], [125.73, 175.7]], [[91.33, 187.3], [99.93, 187.3], [108.53, 187.3], [117.13, 187.3], [125.73, 187.3]], [[91.33, 198.9], [99.93, 198.9], [108.53, 198.9], [117.13, 198.9], [125.73, 198.9]], [[91.33, 210.5], [99.93, 210.5], [108.53, 210.5], [117.13, 210.5], [125.73, 210.5]], [[91.33, 222.1], [99.93, 222.1], [108.53, 222.1], [117.13, 222.1], [125.73, 222.1]], [[91.33, 233.7], [99.93, 233.7], [108.53, 233.7], [117.13, 233.7], [125.73, 233.7]], [[91.33, 245.3], [99.93, 245.3], [108.53, 245.3], [117.13, 245.3], [125.73, 245.3]], [[91.33, 256.9], [99.93, 256.9], [108.53, 256.9], [117.13, 256.9], [125.73, 256.9]], [[146.67, 94.5], [155.27, 94.5], [163.87, 94.5], [172.47, 94.5], [181.07, 94.5]], [[146.67, 106.1], [155.27, 106.1], [163.87, 106.1], [172.47, 106.1], [181.07, 106.1]], [[146.67, 117.7], [155.27, 117.7], [163.87, 117.7], [172.47, 117.7], [181.07, 117.7]], [[146.67, 129.3], [155.27, 129.3], [163.87, 129.3], [172.47, 129.3], [181.07, 129.3]], [[146.67, 140.9], [155.27, 140.9], [163.87, 140.9], [172.47, 140.9], [181.07, 140.9]], [[146.67, 152.5], [155.27, 152.5], [163.87, 152.5], [172.47, 152.5], [181.07, 152.5]], [[146.67, 164.1], [155.27, 164.1], [163.87, 164.1], [172.47, 164.1], [181.07, 164.1]], [[146.67, 175.7], [155.27, 175.7], [163.87, 175.7], [172.47, 175.7], [181.07, 175.7]], [[146.67, 187.3], [155.27, 187.3], [163.87, 187.3], [172.47, 187.3], [181.07, 187.3]], [[146.67, 198.9], [155.27, 198.9], [163.87, 198.9], [172.47, 198.9], [181.07, 198.9]], [[146.67, 210.5], [155.27, 210.5], [163.87, 210.5], [172.47, 210.5], [181.07, 210.5]], [[146.67, 222.1], [155.27, 222.1], [163.87, 222.1], [172.47, 222.1], [181.07, 222.1]], [[146.67, 233.7], [155.27, 233.7], [163.87, 233.7], [172.47, 233.7], [181.07, 233.7]], [[146.67, 245.3], [155.27, 245.3], [163.87, 245.3], [172.47, 245.3], [181.07, 245.3]], [[146.67, 256.9], [155.27, 256.9], [163.87, 256.9], [172.47, 256.9], [181.07, 256.9]]]}};
+let GEO=GEOS["30"],DATA=null;
+/* Leitura óptica do cartão-resposta (OMR). gray: tons de cinza w×h; G: geometria do cartão em mm */
+function omr(gray,w,h,G){
+  const iw=w+1,I=new Float64Array(iw*(h+1));
+  for(let y=0;y<h;y++){let r=0;for(let x=0;x<w;x++){r+=gray[y*w+x];I[(y+1)*iw+x+1]=I[y*iw+x+1]+r}}
+  const s=Math.max(8,Math.round(w/24)),bin=new Uint8Array(w*h);
+  for(let y=0;y<h;y++){const y0=Math.max(0,y-s),y1=Math.min(h,y+s+1);
+    for(let x=0;x<w;x++){const x0=Math.max(0,x-s),x1=Math.min(w,x+s+1);
+      const m=(I[y1*iw+x1]-I[y0*iw+x1]-I[y1*iw+x0]+I[y0*iw+x0])/((x1-x0)*(y1-y0));
+      bin[y*w+x]=gray[y*w+x]<m*0.78?1:0}}
+  /* 1) marcadores de canto: quadrados pretos maciços */
+  const seen=new Uint8Array(w*h),st=new Int32Array(w*h),lst=new Int32Array(w*h),cand=[];
+  /* preenchimento do menor retângulo girado: quadrado ≈0.9+, bolinha ≈0.79 (vale mesmo com a foto inclinada) */
+  const minFill=(n)=>{let best=1e18;for(let a=0;a<90;a+=6){const ca=Math.cos(a*Math.PI/180),sa=Math.sin(a*Math.PI/180);let u0=1e9,u1=-1e9,v0=1e9,v1=-1e9;for(let i=0;i<n;i++){const q=lst[i],x=q%w,y=(q/w)|0,u=x*ca+y*sa,v=-x*sa+y*ca;if(u<u0)u0=u;if(u>u1)u1=u;if(v<v0)v0=v;if(v>v1)v1=v}best=Math.min(best,(u1-u0+1)*(v1-v0+1))}return n/best};
+  for(let p=0;p<w*h;p++){
+    if(!bin[p]||seen[p])continue;
+    let sp=0,n=0,x0=w,x1=0,y0=h,y1=0,sx=0,sy=0;st[sp++]=p;seen[p]=1;
+    while(sp){const q=st[--sp],x=q%w,y=(q/w)|0;lst[n++]=q;sx+=x;sy+=y;
+      if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;
+      if(x>0&&bin[q-1]&&!seen[q-1]){seen[q-1]=1;st[sp++]=q-1}
+      if(x<w-1&&bin[q+1]&&!seen[q+1]){seen[q+1]=1;st[sp++]=q+1}
+      if(y>0&&bin[q-w]&&!seen[q-w]){seen[q-w]=1;st[sp++]=q-w}
+      if(y<h-1&&bin[q+w]&&!seen[q+w]){seen[q+w]=1;st[sp++]=q+w}}
+    const bw=x1-x0+1,bh=y1-y0+1;
+    if(bw>.012*w&&bw<.1*w&&bh>.012*w&&bh<.1*w&&Math.max(bw,bh)/Math.min(bw,bh)<1.5&&n/(bw*bh)>.45&&minFill(n)>.84)cand.push({x:sx/n,y:sy/n,s:Math.sqrt(n)});
+  }
+  const fail=e=>({ok:false,err:e});
+  if(cand.length<4)return fail("Não achei os 4 quadrados pretos dos cantos. Enquadre o cartão inteiro, com boa luz.");
+  const by=f=>cand.reduce((a,b)=>f(b)>f(a)?b:a);
+  const TL=by(c=>-(c.x+c.y)),BR=by(c=>c.x+c.y),TR=by(c=>c.x-c.y),BL=by(c=>c.y-c.x);
+  const P=[TL,TR,BR,BL];
+  if(new Set(P).size<4)return fail("Não achei os 4 quadrados pretos dos cantos. Enquadre o cartão inteiro.");
+  const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),A=(d(TL,TR)+d(BL,BR))/2,B=(d(TL,BL)+d(TR,BR))/2,ra=Math.max(A,B)/Math.min(A,B);
+  const sz=P.map(p=>p.s),smin=Math.min(...sz),smax=Math.max(...sz);
+  if(ra<1.15||ra>1.85||smax/smin>1.6)return fail("Cartão não reconhecido. Fotografe a folha inteira, de frente e sem dobras.");
+  /* 2) homografia página(mm) -> imagem(px); testa as 4 rotações pelo QR code */
+  const homog=(S,D)=>{const M=[],b=[];for(let i=0;i<4;i++){const[x,y]=S[i],[u,v]=D[i];
+    M.push([x,y,1,0,0,0,-u*x,-u*y]);b.push(u);M.push([0,0,0,x,y,1,-v*x,-v*y]);b.push(v)}
+    for(let c=0;c<8;c++){let p=c;for(let r=c+1;r<8;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;
+      [M[c],M[p]]=[M[p],M[c]];[b[c],b[p]]=[b[p],b[c]];
+      for(let r=c+1;r<8;r++){const f=M[r][c]/M[c][c];for(let k=c;k<8;k++)M[r][k]-=f*M[c][k];b[r]-=f*b[c]}}
+    const x=Array(8);for(let r=7;r>=0;r--){let t=b[r];for(let k=r+1;k<8;k++)t-=M[r][k]*x[k];x[r]=t/M[r][r]}return x};
+  const map=(H,x,y)=>{const z=H[6]*x+H[7]*y+1;return[(H[0]*x+H[1]*y+H[2])/z,(H[3]*x+H[4]*y+H[5])/z]};
+  const at=(u,v)=>{const x=Math.round(u),y=Math.round(v);return(x<0||y<0||x>=w||y>=h)?0:bin[y*w+x]};
+  let best=null;
+  for(let k=0;k<4;k++){
+    const D=[0,1,2,3].map(i=>{const p=P[(i+k)%4];return[p.x,p.y]});
+    const H=homog(G.mk,D),[qx,qy,qw,qh]=G.qr;let n=0;
+    for(let i=0;i<24;i++)for(let j=0;j<24;j++){const[u,v]=map(H,qx+qw*(i+.5)/24,qy+qh*(j+.5)/24);n+=at(u,v)}
+    const dens=n/576;if(!best||dens>best.dens)best={H,dens}}
+  if(best.dens<.2)return fail("Não encontrei o QR code no cartão. Fotografe o cartão inteiro.");
+  /* 3) lê as bolinhas */
+  const H=best.H,rmm=G.R*.68;
+  const marks=[],flags=[],fills=[],pos=[];let rpx=0;
+  for(let q=0;q<G.b.length;q++){
+    const f=[],ps=[];
+    for(let i=0;i<5;i++){
+      const[cx,cy]=G.b[q][i],[u,v]=map(H,cx,cy),[u2,v2]=map(H,cx+rmm,cy);
+      const r=Math.hypot(u2-u,v2-v);rpx=r;ps.push([u,v]);
+      let n=0,t=0;const R=Math.ceil(r);
+      for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){if(dx*dx+dy*dy>r*r)continue;t++;n+=at(u+dx,v+dy)}
+      f.push(t?n/t:0)}
+    fills.push(f);pos.push(ps);
+    const mx=Math.max(...f),idx=f.indexOf(mx);
+    const strong=f.filter(x=>x>.32&&x>.65*mx).length;
+    if(mx<.32){marks.push("");flags.push(false)}
+    else if(strong>1){marks.push("");flags.push(true)}
+    else{marks.push("ABCDE"[idx]);flags.push(false)}
+  }
+  return{ok:true,marks,flags,fills,pos,rpx,qrDensity:best.dens};
+}
+if(typeof module!=="undefined")module.exports={omr};
+
+const d64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const $=id=>document.getElementById(id);
+let N=30,KEY=[],mark=Array(30).fill(""),flags=new Set(),last=null,bmp=null;
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+async function unlock(silent){
+  $("err").textContent="";
+  const pw=$("pw").value;if(!pw)return;
+  try{
+    const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+    const k=await crypto.subtle.deriveKey({name:"PBKDF2",salt:d64(BLOB.s),iterations:200000,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+    const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:d64(BLOB.i)},k,d64(BLOB.c));
+    DATA=JSON.parse(new TextDecoder().decode(pt));
+    if($("rem").checked)LS.set("pwsim",pw);
+    $("gate").hidden=true;start();
+  }catch(e){
+    LS.del("pwsim");
+    if(!silent)$("err").textContent="Senha incorreta. Confira e tente de novo.";
+  }
+}
+$("enter").onclick=()=>unlock(false);
+$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")unlock(false)});
+$("out").onclick=$("out2").onclick=()=>{LS.del("pwsim");location.reload()};
+function start(){const id=(location.hash||"").slice(1).toLowerCase();if(DATA.t[id])pickTurma(id);else showPick()}
+function showPick(){$("app").hidden=true;$("pick").hidden=false;$("ttl").textContent="Correção de simulados";$("picks").innerHTML=DATA.o.map(id=>`<button class="pk" data-id="${id}">${DATA.t[id].n}</button>`).join("")}
+$("picks").onclick=e=>{const b=e.target.closest(".pk");if(b)pickTurma(b.dataset.id)};
+function pickTurma(id){const x=DATA.t[id];KEY=x.k;N=KEY.length;GEO=GEOS[x.g];mark=Array(N).fill("");flags=new Set();last=null;bmp=null;$("prev").hidden=true;msg("");$("pick").hidden=true;$("app").hidden=false;$("ttl").textContent="Simulado "+x.n;$("who").textContent=x.n+" · "+N+" questões";build();tab(1)}
+$("swap").onclick=showPick;
+window.addEventListener("hashchange",()=>{if(DATA)start()});
+{const s=LS.get("pwsim");if(s){$("pw").value=s;unlock(true)}}
+
+function build(){
+  $("tot").textContent=N;$("seq").maxLength=N;
+  const rows=$("rows");rows.innerHTML="";
+  for(let i=0;i<N;i++){
+    const r=document.createElement("div");r.className="q";r.id="q"+i;
+    let o="";"ABCDE".split("").forEach(l=>{o+=`<button class="opt" data-q="${i}" data-l="${l}" aria-pressed="false" aria-label="Questão ${i+1}, alternativa ${l}">${l}</button>`});
+    r.innerHTML=`<span class="n">${i+1}</span><div class="opts">${o}</div><span class="res"></span>`;
+    rows.appendChild(r);
+  }
+  rows.onclick=e=>{const b=e.target.closest(".opt");if(!b)return;const q=+b.dataset.q,l=b.dataset.l;mark[q]=mark[q]===l?"":l;flags.delete(q);paint()};
+  $("key").innerHTML=KEY.map((a,i)=>`<div class="cell"><span>Questão ${i+1}</span><b>${a}</b></div>`).join("");
+  paint();
+}
+function paint(){
+  let hits=0,ans=0;
+  mark.forEach((m,i)=>{
+    const r=$("q"+i);r.classList.remove("ok","no","chk");
+    r.querySelectorAll(".opt").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===m));
+    const res=r.querySelector(".res");res.textContent="";
+    if(m){ans++;if(m===KEY[i]){hits++;r.classList.add("ok");res.textContent="Certa"}else{r.classList.add("no");res.textContent="Gab. "+KEY[i]}}
+    else if(flags.has(i)){r.classList.add("chk");res.textContent="Conferir"}
+  });
+  $("hits").textContent=hits;
+  $("info").textContent=last||ans?`${ans} respondidas · ${N-ans} em branco`:"Nenhum cartão lido";
+  $("seq").value=mark.map(m=>m||".").join("").replace(/\.+$/,"");
+  overlay();
+}
+function overlay(){
+  if(!last||!bmp)return;
+  const cv=$("prev"),x=cv.getContext("2d");x.drawImage(bmp,0,0,cv.width,cv.height);
+  const r=last.rpx*1.5;x.lineWidth=Math.max(3,r*.22);
+  for(let q=0;q<N;q++){
+    if(flags.has(q)&&!mark[q]){x.strokeStyle="#ffb300";last.pos[q].forEach(([u,v])=>{x.beginPath();x.arc(u,v,r,0,7);x.stroke()});continue}
+    const i="ABCDE".indexOf(mark[q]);if(i<0)continue;
+    x.strokeStyle=mark[q]===KEY[q]?"#1fbf6a":"#ff3b30";x.beginPath();x.arc(last.pos[q][i][0],last.pos[q][i][1],r,0,7);x.stroke();
+  }
+}
+function msg(t,cls){const m=$("msg");m.textContent=t;m.className=cls||""}
+async function scan(f){
+  msg("Lendo o cartão…");
+  try{
+    try{bmp=await createImageBitmap(f,{imageOrientation:"from-image"})}catch(_){bmp=await createImageBitmap(f)}
+    const sc=Math.min(1,1400/Math.max(bmp.width,bmp.height)),w=Math.round(bmp.width*sc),h=Math.round(bmp.height*sc);
+    const cv=$("prev");cv.width=w;cv.height=h;const x=cv.getContext("2d");x.drawImage(bmp,0,0,w,h);
+    const px=x.getImageData(0,0,w,h).data,g=new Uint8ClampedArray(w*h);
+    for(let i=0;i<w*h;i++)g[i]=.299*px[i*4]+.587*px[i*4+1]+.114*px[i*4+2];
+    const r=omr(g,w,h,GEO);
+    cv.hidden=false;
+    if(!r.ok){last=null;mark=Array(N).fill("");flags=new Set();paint();msg(r.err+" Tire outra foto.","bad");return}
+    last=r;mark=r.marks;flags=new Set(r.flags.map((v,i)=>v?i:-1).filter(i=>i>=0));
+    paint();
+    const n=flags.size;
+    if(n){$("chk").open=true;msg(`Pronto, mas confira ${n} questão(ões) com marcação dupla ou ilegível (marcadas em amarelo).`,"warn")}
+    else msg("Cartão lido. Confira o resultado na foto: verde = certa, vermelho = errada.");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }catch(e){msg("Não consegui abrir a foto. Tente de novo.","bad")}
+}
+$("cam").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)scan(f)};
+$("seq").addEventListener("input",e=>{
+  const s=e.target.value.toUpperCase(),pos=e.target.selectionStart;
+  mark=Array.from({length:N},(_,i)=>"ABCDE".includes(s[i]||"-")&&s[i]?s[i]:"");flags=new Set();
+  paint();e.target.value=s;e.target.setSelectionRange(pos,pos);
+});
+$("clear").onclick=()=>{mark=Array(N).fill("");flags=new Set();last=null;bmp=null;$("prev").hidden=true;msg("");paint();$("cam").click()};
+function tab(n){$("p1").hidden=n!==1;$("p2").hidden=n!==2;$("t1").setAttribute("aria-selected",n===1);$("t2").setAttribute("aria-selected",n===2)}
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);
+</script>
+</body>
+</html>
